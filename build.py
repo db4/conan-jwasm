@@ -1,13 +1,12 @@
-import platform
-
 from conan.packager import ConanMultiPackager
 
 
 if __name__ == "__main__":
     builder = ConanMultiPackager()
-    builder.add(settings={"arch": "x86_64"}, options={},
-                env_vars={}, build_requires={})
-    if platform.system() != "Darwin":
-        builder.add(settings={"arch": "x86"}, options={},
-                    env_vars={}, build_requires={})
+    builder.add_common_builds(pure_c=True)
+    filtered_builds = []
+    for settings, options, env_vars, build_requires in builder.builds:
+        if settings["build_type"] == "Release":
+            filtered_builds.append([settings, options, env_vars, build_requires])
+    builder.builds = filtered_builds
     builder.run()
