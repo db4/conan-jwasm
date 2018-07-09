@@ -7,7 +7,7 @@ class JWasmConan(ConanFile):
     description = "JWasm Masm-compatible assembler"
     url = "http://github.com/db4/conan-jwasm"
     license = "Sybase Open Watcom Public License"
-    settings = "os", "compiler", "arch"
+    settings = "os_build", "compiler", "arch", "arch_build"
     exports_sources = "CMakeLists.txt"
     generators = "cmake"
 
@@ -15,6 +15,7 @@ class JWasmConan(ConanFile):
         tools.get("https://sourceforge.net/projects/jwasm/files/JWasm%20Source%20Code/JWasm212s_140105.zip")
 
     def build(self):
+        self.settings.arch = self.settings.arch_build
         cmake = CMake(self)
         cmake.definitions["CMAKE_BUILD_TYPE"] = "Release"
         cmake.configure()
@@ -29,9 +30,6 @@ class JWasmConan(ConanFile):
 
     def package_id(self):
         self.info.include_build_settings()
-        self.info.settings.arch_build = self.info.settings.arch
-        self.info.settings.os_build = self.info.settings.os
-        del self.info.settings.os
         del self.info.settings.compiler
         del self.info.settings.arch
 
