@@ -15,6 +15,9 @@ class JWasmConan(ConanFile):
         tools.get("https://sourceforge.net/projects/jwasm/files/JWasm%20Source%20Code/JWasm212s_140105.zip")
 
     def build(self):
+        if self.settings.os_build == "Windows":
+            # jwasm win64 binary fails with "Error A2168: General Failure"
+            self.settings.arch_build = "x86"
         self.settings.arch = self.settings.arch_build
         cmake = CMake(self)
         cmake.definitions["CMAKE_BUILD_TYPE"] = "Release"
@@ -32,4 +35,6 @@ class JWasmConan(ConanFile):
         self.info.include_build_settings()
         del self.info.settings.compiler
         del self.info.settings.arch
+        if self.settings.os_build == "Windows":
+            del self.info.settings.arch_build
 
